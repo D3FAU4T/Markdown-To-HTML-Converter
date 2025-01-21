@@ -6,17 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{D3-WEBPAGETITLE}}</title>
     <link rel="icon" href="https://d3fau4t.vercel.app/favicon.ico">
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link id="code-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script type="importmap">
         {
           "imports": {
             "@material/web/": "https://esm.run/@material/web/"
           }
         }
-      </script>
+    </script>
     <script type="module">
         import '@material/web/all.js';
         import { styles as typescaleStyles } from '@material/web/typography/md-typescale-styles.js';
@@ -131,6 +129,8 @@
 
         function setThemeMode(mode) {
             const root = document.documentElement;
+            const link = document.getElementById('code-theme');
+
             if (mode == "white") {
                 root.style.setProperty('--md-sys-color-background', '#f7f9ff');
                 root.style.setProperty('--md-sys-color-surface', '#e9eef6');
@@ -143,6 +143,7 @@
                 root.style.setProperty('--note-border-color-hover', `var(--md-sys-color-text)`);
                 root.style.setProperty('--link-decoration', `underline`);
                 document.querySelectorAll('.material-symbols-outlined').forEach(elem => elem.style.color = '#000000');
+                link.href = link.href.replace('atom-one-dark', 'atom-one-light');
             } else {
                 root.style.setProperty('--md-sys-color-background', '#10131b');
                 root.style.setProperty('--md-sys-color-surface', '#1c1f28');
@@ -155,6 +156,7 @@
                 root.style.setProperty('--note-border-color-hover', `var(--md-sys-color-primary)`);
                 root.style.setProperty('--link-decoration', `none`);
                 document.querySelectorAll('.material-symbols-outlined').forEach(elem => elem.style.color = '#ffffff');
+                link.href = link.href.replace('atom-one-light', 'atom-one-dark');
             }
         }
 
@@ -176,7 +178,6 @@
             }
         }
 
-        console.log(summaries);
         summaries.forEach(elem => {
             const summary = elem.getAttribute('data-summary');
             const li = document.createElement('li');
