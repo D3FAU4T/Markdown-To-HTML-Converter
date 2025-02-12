@@ -65,7 +65,7 @@
         <main>
             <section class="scrollbar-wrapper">{{D3-MARKDOWN}}</section>
         </main>
-        <aside class="overview">
+        <aside class="overview" id="summaryPanel">
             <p>On this page:</p>
             <h2>{{D3-TITLE}}</h2>
             <ul style="display: flex; flex-direction: column; gap: 5px;" id="summary-ul">
@@ -187,6 +187,9 @@
             li.appendChild(a);
             summaryUL.appendChild(li);
         });
+
+        if (summaries.length === 0)
+            document.getElementById('summaryPanel').hidden = true;
     </script>
 </body>
 
