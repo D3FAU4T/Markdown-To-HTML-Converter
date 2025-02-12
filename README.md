@@ -2,22 +2,16 @@
 
 ## Usage
 
-1. install dependencies:
+1. Install dependencies:
 
     ```bash
     bun install
     ```
 
-2. Run the initiating script
+2. Put your markdown files in the markdown folder and use:
 
     ```bash
-    bun initiate
+    bun index ./markdown/filename.md
     ```
 
-3. Put your markdown files in the markdown folder and use:
-
-    ```bash
-    bun index.ts path/to/file.ext
-    ```
-
-This project was created using `bun init` in bun v1.1.45. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+This project was created using `bun init` in bun v1.2.2. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.

@@ -8,4 +8,6 @@ for (const directory of directories) {
         mkdirSync(directory);
         console.log(`Directory ${directory} created`);
     }
+
+    else console.log(`Directory ${directory} already exists. Skipping...`);
 }
