@@ -405,6 +405,11 @@ pre>code {
     box-sizing: border-box;
 }
 
+iframe {
+    width: 70%;
+    height: 50dvh;
+}
+
 .codelang {
     width: 70%;
     display: flex;
@@ -451,6 +456,11 @@ pre>code {
     .codelang,
     pre>code {
         width: auto;
+    }
+
+    iframe {
+        width: auto;
+        height: 20dvh;
     }
 
     .omit-second-col>table>thead>tr>th:nth-child(2),
