@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{D3-WEBPAGETITLE}}</title>
+    <link rel="icon" href="https://d3fau4t.vercel.app/favicon.ico">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <script type="importmap">
+        {
+          "imports": {
+            "@material/web/": "https://esm.run/@material/web/"
+          }
+        }
+      </script>
+    <script type="module">
+        import '@material/web/all.js';
+        import { styles as typescaleStyles } from '@material/web/typography/md-typescale-styles.js';
+
+        document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
+    <style>
+        /*D3-CSSSTYLE*/
+    </style>
+</head>
+
+<body>
+    <header>
+        <div> 
+            <md-list-item type="button" id="hamBtn" md-list-item="">
+                <span class="material-symbols-outlined">Menu</span>
+            </md-list-item>
+        </div>
+
+        <a class="Webpage-Name" href="/"><b>{{D3-TITLE}}</b></a>
+
+        <md-list-item type="button" id="paletteBtn">
+            <span class="material-symbols-outlined">Palette</span>
+        </md-list-item>
+    </header>
+
+    <div class="" id="theme-changer">
+        <div class="theme-copy">
+            <h2>Theme Controls</h2>
+            <md-list-item type="button" onclick="copyColor()" id="themeCopy">
+                <span class="material-symbols-outlined">Content_Copy</span>
+            </md-list-item>
+        </div>
+        <div class="option-cover">
+            <div id="theme-option">
+                <p>Hue</p>
+                <md-slider id="hue-slider" min="0" max="360" value="230"></md-slider>
+            </div>
+            <div class="hue" id="hue-display"></div>
+        </div>
+        <div class="darkMode">
+            <md-outlined-button onclick="setThemeMode('dark')" title="Enable Dark Mode" id="darkmodeon">
+                <span class="material-symbols-outlined">Dark_Mode</span>
+            </md-outlined-button>
+            <md-outlined-button onclick="setThemeMode('white')" title="Enable Light Mode" id="lightmodeon">
+                <span class="material-symbols-outlined">Light_Mode</span>
+            </md-outlined-button>
+        </div>
+    </div>
+
+    <div class="container">
+        <aside class="navbar">
+            <md-list class="scrollbar-wrapper" role="menubar" id="navbar-list">
+                <md-item role="menuitem">
+                    <div slot="headline">Documents</div>
+                    <span slot="end" class="material-symbols-outlined">collections_bookmark</span>
+                </md-item>
+            </md-list>
+        </aside>
+        <main>
+            {{D3-MARKDOWN}}
+        </main>
+        <aside class="overview">
+            <p>On this page:</p>
+            <h2>{{D3-TITLE}}</h2>
+            <ul style="display: flex; flex-direction: column; gap: 5px;">
+
+            </ul>
+        </aside>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        hljs.highlightAll();
+        const languageMap = {
+            'language-py': 'Python',
+            'language-js': 'JavaScript',
+            'language-bash': 'Bash',
+            'language-c': 'C Programming',
+            'language-sql': 'Structured Query Language',
+            'language-plaintext': 'Plain Text',
+            'language-text': 'Plain Text',
+        };
+
+        const settings = {
+            hue: 230,
+            isThemePaletteOpen: false,
+        }
+
+        const codeBlocks = document.querySelectorAll('pre > code');
+        const hueSlider = document.querySelector('#hue-slider');
+        const copyBtnText = document.querySelector('#themeCopy > span');
+        const paletteBtn = document.querySelector('#paletteBtn');
+        const overview = document.querySelector('.overview');
+        const hamBtn = document.querySelector('#hamBtn');
+        const navbar = document.querySelector('.navbar');
+        const themeChanger = document.querySelector('#theme-changer');
+        const navbarList = document.querySelector('#navbar-list');
+
+        const sections = document.querySelectorAll('main > section.scrollbar-wrapper');
+
+        if (sections.length > 1) {
+            navbar.style.display = 'none';
+            navbar.style.transition = 'transform 0.3s ease, display 0.3s ease';
+
+            hamBtn.addEventListener('click', (event) => {
+                if (navbar.style.display === 'none') {
+                    navbar.style.display = 'block';
+                    setTimeout(() => {
+                        navbar.style.transform = 'translateX(0%)';
+                    }, 10);
+                } else {
+                    navbar.style.transform = 'translateX(-100%)';
+                    setTimeout(() => {
+                        navbar.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+
+        else {
+            navbar.remove();
+            hamBtn.hidden = 'true';
+            hamBtn.style.visibility = 'hidden';
+        }
+
+        paletteBtn.addEventListener('click', () => {
+            settings.isThemePaletteOpen = !settings.isThemePaletteOpen;
+            themeChanger.classList.toggle('visible', settings.isThemePaletteOpen);
+        });
+
+        hueSlider.addEventListener('input', (event) => {
+            settings.hue = parseInt(event.target.value);
+            const primaryColor = `hsl(${settings.hue}, 100%, 70%)`;
+            document.documentElement.style.setProperty('--md-sys-color-primary', primaryColor);
+        });
+
+        function copyColor() {
+            copyBtnText.textContent = 'check';
+            navigator.clipboard.writeText(hslToHex(settings.hue, 100, 70));
+            setTimeout(() => copyBtnText.textContent = 'Content_Copy', 500);
+        };
+
+        function hslToHex(hue, saturation, lightness) {
+            lightness /= 100;
+            const chroma = saturation * Math.min(lightness, 1 - lightness) / 100;
+
+            const getColorComponent = (offset) => {
+                const componentHue = (offset + hue / 30) % 12;
+                const color = lightness - chroma * Math.max(Math.min(componentHue - 3, 9 - componentHue, 1), -1);
+                return Math.round(255 * color).toString(16).padStart(2, '0');
+            };
+
+            return `#${getColorComponent(0)}${getColorComponent(8)}${getColorComponent(4)}`;
+        }
+
+        function setThemeMode(mode) {
+            const root = document.documentElement;
+            if (mode == "white") {
+                root.style.setProperty('--md-sys-color-background', '#f7f9ff');
+                root.style.setProperty('--md-sys-color-surface', '#e9eef6');
+                root.style.setProperty('--md-sys-color-text', '#000000');
+                root.style.setProperty('--option-cover-color', '#dbe3ed');
+                root.style.setProperty('--small-text-color', '#000000');
+                root.style.setProperty('--selected', '#dbe3ed');
+                root.style.setProperty('--hover-color', `var(--md-sys-color-primary)`);
+                root.style.setProperty(`--link-color`, `#ffffff`);
+                root.style.setProperty('--note-border-color-hover', `var(--md-sys-color-text)`);
+                root.style.setProperty('--link-decoration', `underline`);
+                document.querySelectorAll('.material-symbols-outlined').forEach(elem => elem.style.color = '#000000');
+            } else {
+                root.style.setProperty('--md-sys-color-background', '#10131b');
+                root.style.setProperty('--md-sys-color-surface', '#1c1f28');
+                root.style.setProperty('--md-sys-color-text', '#ffffff');
+                root.style.setProperty('--option-cover-color', '#414755');
+                root.style.setProperty('--small-text-color', '#e0e2ed');
+                root.style.setProperty('--selected', '#33353a');
+                root.style.setProperty('--hover-color', `#2c2f38`);
+                root.style.setProperty(`--link-color`, `var(--md-sys-color-primary)`);
+                root.style.setProperty('--note-border-color-hover', `var(--md-sys-color-primary)`);
+                root.style.setProperty('--link-decoration', `none`);
+                document.querySelectorAll('.material-symbols-outlined').forEach(elem => elem.style.color = '#ffffff');
+            }
+        }
+
+        for (const codeBlock of codeBlocks) {
+            const preTag = codeBlock.parentElement;
+            const classList = codeBlock.classList;
+            let language = '';
+
+            for (const className of classList) {
+                if (languageMap[className])
+                    language = languageMap[className];
+            }
+
+            if (language) {
+                const newElement = document.createElement('div');
+                newElement.textContent = language;
+                newElement.classList.add('codelang');
+                preTag.insertAdjacentElement('beforebegin', newElement)
+            }
+        }
+
+        for (const section of sections) {
+            const contentID = section.getAttribute('id');
+
+            const mdListItem = document.createElement('md-list-item');
+            mdListItem.setAttribute('type', 'button');
+            mdListItem.setAttribute('id', contentID.replace('content', 'btn'));
+
+            mdListItem.setAttribute('onclick', `showSection(\`${contentID}\`)`);
+
+            const p = document.createElement('p');
+            p.textContent = contentID.replace('content-', '');
+            mdListItem.appendChild(p);
+
+            const span = document.createElement('span');
+            span.setAttribute('slot', 'start');
+            span.classList.add('material-symbols-outlined');
+            span.textContent = 'description';
+            mdListItem.appendChild(span);
+
+            navbarList.appendChild(mdListItem);
+        }
+
+        function generateSummaries() {
+            const summaryUL = overview.querySelector('ul');
+            summaryUL.innerHTML = '';
+
+            sections.forEach((section) => {
+                if (section.style.display === 'block') {
+                    const summaries = section.querySelectorAll('.summary');
+
+                    summaries.forEach((elem) => {
+                        const summary = elem.getAttribute('data-summary');
+                        const li = document.createElement('li');
+                        const a = document.createElement('a');
+                        a.textContent = summary;
+                        a.href = `#${elem.getAttribute('id')}`;
+                        li.appendChild(a);
+                        summaryUL.appendChild(li);
+                    });
+                }
+            });
+        }
+
+        function showSection(targetID) {
+            const pageName = targetID.replace('content-', '');
+
+            document.querySelector(`.Webpage-Name > b`).textContent = pageName;
+            overview.querySelector('h2').textContent = pageName;
+
+            sections.forEach((section) => {
+                section.style.display = section.getAttribute('id') === targetID ? 'block' : 'none';
+            });
+
+            generateSummaries();
+
+            if (!navbar) return;
+
+            navbar.style.transform = 'translateX(-100%)';
+            setTimeout(() => {
+                navbar.style.display = 'none';
+            }, 300);
+        }
+
+        sections.forEach((section, index) => section.style.display = index === 0 ? 'block' : 'none');
+        generateSummaries();
+    </script>
+</body>
+
+</html>
