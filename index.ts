@@ -1,4 +1,9 @@
 import { marked } from "marked";
+import markedKatex from "marked-katex-extension";
+
+marked.use(markedKatex({
+    output: "mathml"
+}));
 
 type contentsType = {
     title: string;
